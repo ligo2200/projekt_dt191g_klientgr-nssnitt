@@ -1,7 +1,110 @@
 ﻿@page "/"
+@inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<PageTitle>Barnens hörna - Webshop</PageTitle>
 
-Welcome to your new app.
+<div class="container mt-5">
+    <h1 class="text-center">Välkommen till Webshopen för Barnens hörnas bytesmarknad!</h1>
+
+    <!-- Sektion för nyaste produkterna -->
+    <section class="mt-5">
+        <h2>Senast inkomna Produkter</h2>
+        <div class="row" id="latest-products" hx-get="/api/products/latest" hx-trigger="load"
+            hx-target="#latest-products">
+            <!-- Nyaste produkterna hämtas här -->
+        </div>
+    </section>
+
+    <!-- Sektion för kategorier -->
+    <section class="mt-5">
+        <h3>Kategorier</h3>
+        <div class="row mb-4">
+
+            
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100 category-button"
+                    hx-get="http://localhost:5244/api/Api/products/category/name/underdelar" hx-target="#products-list"
+                    hx-swap="innerHTML">
+                    Underdelar
+                </button>
+            </div>
+            <!-- Lägg till fler kategorier -->
+
+            
+        </div>
+    </section>
+
+    <!-- Sektion för att visa produkter från vald kategori -->
+    <section id="products-section" class="mt-5">
+        
+        <!--<div class="col-md-4 mb-4" hx-get="/api/products/{{category}}" hx-trigger="load">
+            <div class="card">
+                <img src="{{productImageUrl}}" class="card-img-top" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title">{{productName}}</h5>
+                    <p class="card-text">Storlek: {{productSize}}</p>
+                    <p class="card-text">Pris: {{productPrice}} kr</p>
+                    <a href="#" class="btn btn-primary" hx-post="/cart/add/{{productId}}">Köp nu</a>
+                    <a href="#" class="btn btn-secondary" hx-get="/api/products/{{productId}}"
+                        hx-target="#product-details">Se produkt</a>
+                </div>
+            </div>
+        </div>-->
+        <div id="products-list">
+            @if (products != null)
+            {
+                <div class="row">
+                    @foreach (var product in products)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <img src="@product.ImageUrl" class="card-img-top" alt="@product.TypeOfProduct">
+                                <div class="card-body">
+                                    <h5 class="card-title">@product.TypeOfProduct</h5>
+                                    <p class="card-text">Storlek: @product.Size</p>
+                                    <p class="card-text">Pris: @product.Price kr</p>
+                                    <a href="#" class="btn btn-primary">Köp nu</a>
+                                    <a href="#" class="btn btn-secondary">Se produkt</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Laddar produkter...</p>
+            }
+
+        </div>
+    </section>
+</div>
+
+
+@code {
+    [Parameter] public string categoryName { get; set; }
+
+    private Product[]? products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // API-anrop för att hämta produkter för vald kategori
+        products = await
+        Http.GetFromJsonAsync<Product[]>($"http://localhost:5244/api/Api/products/category/name/{categoryName}");
+    }
+
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string TypeOfProduct { get; set; }
+        public decimal Price { get; set; }
+        public string Size { get; set; }
+        public string Color { get; set; }
+        public string Description { get; set; }
+        public string ImageName { get; set; }
+        public string ImageUrl => $"/images/{ImageName}";
+        public bool IsSold { get; set; }
+        public int CategoryId { get; set; }
+    }
+}
