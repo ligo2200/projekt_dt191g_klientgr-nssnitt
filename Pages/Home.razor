@@ -19,25 +19,28 @@
     <!-- Sektion för kategorier -->
     <section class="mt-5">
         <h3>Kategorier</h3>
-        <div class="row mb-4">
-
-            
-            <div class="col-md-3">
-                <button class="btn btn-primary w-100 category-button"
-                    hx-get="http://localhost:5244/api/Api/products/category/name/underdelar" hx-target="#products-list"
-                    hx-swap="innerHTML">
-                    Underdelar
-                </button>
+        @if (categories != null)
+        {
+            <div class="row">
+                @foreach (var category in categories)
+                {
+                    <div class="col-md-3">
+                        <a href="/category/@category.CategoryId" class="btn btn-primary w-100">
+                            @category.Name
+                        </a>
+                    </div>
+                }
             </div>
-            <!-- Lägg till fler kategorier -->
-
-            
-        </div>
+        }
+        else
+        {
+            <p>Laddar kategorier...</p>
+        }
     </section>
 
     <!-- Sektion för att visa produkter från vald kategori -->
     <section id="products-section" class="mt-5">
-        
+
         <!--<div class="col-md-4 mb-4" hx-get="/api/products/{{category}}" hx-trigger="load">
             <div class="card">
                 <img src="{{productImageUrl}}" class="card-img-top" alt="Product Image">
@@ -51,60 +54,33 @@
                 </div>
             </div>
         </div>-->
-        <div id="products-list">
-            @if (products != null)
-            {
-                <div class="row">
-                    @foreach (var product in products)
-                    {
-                        <div class="col-md-4 mb-4">
-                            <div class="card">
-                                <img src="@product.ImageUrl" class="card-img-top" alt="@product.TypeOfProduct">
-                                <div class="card-body">
-                                    <h5 class="card-title">@product.TypeOfProduct</h5>
-                                    <p class="card-text">Storlek: @product.Size</p>
-                                    <p class="card-text">Pris: @product.Price kr</p>
-                                    <a href="#" class="btn btn-primary">Köp nu</a>
-                                    <a href="#" class="btn btn-secondary">Se produkt</a>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <p>Laddar produkter...</p>
-            }
 
-        </div>
     </section>
 </div>
 
-
 @code {
-    [Parameter] public string categoryName { get; set; }
-
-    private Product[]? products;
+    private List<Category>? categories;
 
     protected override async Task OnInitializedAsync()
     {
-        // API-anrop för att hämta produkter för vald kategori
-        products = await
-        Http.GetFromJsonAsync<Product[]>($"http://localhost:5244/api/Api/products/category/name/{categoryName}");
+        try
+        {
+            categories = await Http.GetFromJsonAsync<List<Category>>("http://localhost:5244/api/Api/categories");
+
+            if (categories == null || categories.Count == 0)
+            {
+                Console.WriteLine("Inga kategorier returnerades.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ett fel inträffade vid hämtning av kategorier: {ex.Message}");
+        }
     }
 
-    public class Product
+    public class Category
     {
-        public int ProductId { get; set; }
-        public string TypeOfProduct { get; set; }
-        public decimal Price { get; set; }
-        public string Size { get; set; }
-        public string Color { get; set; }
-        public string Description { get; set; }
-        public string ImageName { get; set; }
-        public string ImageUrl => $"/images/{ImageName}";
-        public bool IsSold { get; set; }
         public int CategoryId { get; set; }
+        public string? Name { get; set; }
     }
 }

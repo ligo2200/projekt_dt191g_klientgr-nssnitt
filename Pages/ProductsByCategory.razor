@@ -1,0 +1,82 @@
+@page "/category/{categoryId:int}"
+@inject HttpClient Http
+<div class="container mt-5">
+    <h3 class="mt-5 pt-4 mb-4 pb-2 text-center" style="font-size: 1.5rem;">Produkter för kategori @categoryName</h3>
+
+    @if (products != null)
+    {
+        <div class="row">
+            @foreach (var product in products)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="@($"http://localhost:5244/images/{product.ImageName}")" class="card-img-top"
+                            style="height: 200px; object-fit: cover;" alt="Produktbild">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.TypeOfProduct</h5>
+                            <p class="card-text">Pris: @product.Price kr</p>
+                            <p class="card-text">Storlek: @product.Size</p>
+                            <div class="d-flex justify-content-between">
+                                <a href="@($"/product-details/{product.ProductId}")" class="btn btn-primary">Se detaljer</a>
+                                <a href="#" class="btn btn-secondary">Köp nu</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Laddar produkter...</p>
+    }
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-link" style="font-size: 1.2rem;">Tillbaka till startsidan</a>
+    </div>
+
+</div>
+
+@code {
+    [Parameter] public int categoryId { get; set; }
+
+    private List<Product>? products;
+    private string? categoryName;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            // Hämta produkterna för vald kategori
+            products = await Http.GetFromJsonAsync<List<Product>>($"http://localhost:5244/api/Api/products/category/{categoryId}");
+
+            // Hämta kategorinamnet
+            var category = await Http.GetFromJsonAsync<Category>($"http://localhost:5244/api/Api/categories/{categoryId}");
+            categoryName = category?.Name;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ett fel inträffade vid hämtning av kategorier: {ex.Message}");
+        }
+    }
+
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string TypeOfProduct { get; set; }
+        public int Price { get; set; }
+        public string Size { get; set; }
+        public string Color { get; set; }
+        public string Description { get; set; }
+        public string ImageName { get; set; }
+        public bool IsSold { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+    }
+
+    public class Category
+    {
+        public int CategoryId { get; set; }
+        public string? Name { get; set; }
+    }
+}
