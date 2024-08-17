@@ -13,6 +13,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 // local storage
 builder.Services.AddBlazoredLocalStorage();
 // adding service for cart
-builder.Services.AddSingleton<CartService>();
+builder.Services.AddScoped<CartService>();
 
 await builder.Build().RunAsync();

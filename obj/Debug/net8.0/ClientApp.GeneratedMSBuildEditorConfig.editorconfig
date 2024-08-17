@@ -38,8 +38,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWJvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Linda/webbutveckling/år2/DT191G_webbutveckling_med_dotnet/projekt/projekt_bytesmarknad/ClientApp/Pages/Cart.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2FydC5yYXpvcg==
+[C:/Linda/webbutveckling/år2/DT191G_webbutveckling_med_dotnet/projekt/projekt_bytesmarknad/ClientApp/Pages/Checkout.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2hlY2tvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Linda/webbutveckling/år2/DT191G_webbutveckling_med_dotnet/projekt/projekt_bytesmarknad/ClientApp/Pages/Contact.razor]
@@ -56,6 +56,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Linda/webbutveckling/år2/DT191G_webbutveckling_med_dotnet/projekt/projekt_bytesmarknad/ClientApp/Pages/ProductsByCategory.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdHNCeUNhdGVnb3J5LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Linda/webbutveckling/år2/DT191G_webbutveckling_med_dotnet/projekt/projekt_bytesmarknad/ClientApp/Pages/Success.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3VjY2Vzcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Linda/webbutveckling/år2/DT191G_webbutveckling_med_dotnet/projekt/projekt_bytesmarknad/ClientApp/_Imports.razor]

@@ -1,0 +1,155 @@
+@page "/checkout"
+@inject HttpClient Http
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+@inject NavigationManager navManager
+@using ClientApp.Services
+@inject CartService CartService
+
+<div class="container mt-3 mb-5 d-flex flex-column align-items-center">
+    <h3 class="mt-5 text-center pt-3 mb-5">Kassa</h3>
+
+    @if (cartProducts != null && cartProducts.Any())
+    {
+        <div class="row w-100 d-flex justify-content-center">
+            @foreach (var product in cartProducts)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="@($"http://localhost:5244/images/{product.ImageName}")" class="card-img-top"
+                            style="height: 150px; object-fit: cover;" alt="Produktbild">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.TypeOfProduct</h5>
+                            <p class="card-text">Storlek: @product.Size</p>
+                            <p class="card-text">Pris: @product.Price kr</p>
+                            <div class="d-flex justify-content-center">
+                                <button class="btn btn-danger" @onclick="() => RemoveFromCart(product.ProductId)">
+                                    <i class="fas fa-trash"></i> Ta bort
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-container d-flex flex-column align-items-center mt-5 mb-5 w-75">
+            <h3>Din information</h3>
+            <EditForm Model="orderDetails" OnValidSubmit="SubmitOrder" class="w-50">
+                <div class="form-group">
+                    <label for="name">Namn (För- och efternamn)</label>
+                    <InputText id="name" class="form-control" @bind-Value="orderDetails.BuyerName" />
+                </div>
+                <div class="form-group">
+                    <label for="adress">Adress</label>
+                    <InputText id="adress" class="form-control" @bind-Value="orderDetails.BuyerAdress" />
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-primary mt-4 mb-2">Skicka/Köp</button>
+                </div>
+            </EditForm>
+        </div>
+    }
+    else
+    {
+        <p class="mt-5">Din kundvagn är tom.</p>
+    }
+</div>
+
+
+@code {
+    private List<Product>? cartProducts = new List<Product>();
+    private OrderDetails orderDetails = new OrderDetails();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CartService.InitializeCartAsync(); // Ensure the cart is synced with localStorage
+        var cart = CartService.GetCartItems();
+
+        if (cart.Any())
+        {
+            foreach (var productId in cart)
+            {
+                var product = await Http.GetFromJsonAsync<Product>($"http://localhost:5244/api/Api/products/{productId}");
+                if (product != null)
+                {
+                    cartProducts.Add(product);
+                }
+            }
+        }
+    }
+
+    private async Task RemoveFromCart(int productId)
+    {
+        // get cartcontent from localstorage
+        var cart = await localStorage.GetItemAsync<List<int>>("cart") ?? new List<int>();
+
+        // remove content
+        cart.Remove(productId);
+        await localStorage.SetItemAsync("cart", cart);
+
+        // update cart
+        cartProducts.RemoveAll(p => p.ProductId == productId);
+    }
+
+    private async Task SubmitOrder()
+    {
+        if (cartProducts == null || !cartProducts.Any())
+        {
+            Console.WriteLine("Inga produkter i kundvagnen");
+            return;
+        }
+
+        var orderRequest = new OrderRequest
+            {
+                BuyerName = orderDetails.BuyerName,
+                BuyerAdress = orderDetails.BuyerAdress,
+                ProductIds = cartProducts.Select(p => p.ProductId).ToList()
+            };
+
+        // send order to API
+        var response = await Http.PostAsJsonAsync("http://localhost:5244/api/Api/orders", orderRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // clear cart
+            await localStorage.RemoveItemAsync("cart");
+
+            // clear cart in CartService
+            CartService.ClearCart();
+            
+            cartProducts.Clear();
+
+            // navigate to successpage
+            // delay navigation to insure cart has updated.
+            await Task.Delay(200);
+            navManager.NavigateTo("/success");
+        }
+        else
+        {
+            Console.WriteLine("Något gick fel vid beställningen.");
+        }
+    }
+
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string TypeOfProduct { get; set; }
+        public int Price { get; set; }
+        public string Size { get; set; }
+        public string ImageName { get; set; }
+    }
+
+    public class OrderRequest
+    {
+        public string BuyerName { get; set; }
+        public string BuyerAdress { get; set; }
+        public List<int> ProductIds { get; set; } = new List<int>();
+    }
+
+    public class OrderDetails
+    {
+        public string BuyerName { get; set; }
+        public string BuyerAdress { get; set; }
+    }
+}

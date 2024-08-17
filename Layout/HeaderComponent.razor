@@ -5,24 +5,30 @@
 
 <header class="header">
     <div class="container-fluid">
-        <div class="navbar navbar-dark">
-            <a class="navbar-brand" href="/">Barnens hörna</a>
+        <div class="navbar navbar-dark w-100">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/heart_100px.png" alt="logotyp" class="logo w-25">
+                <span class="ml-2">Barnens hörna</span>
+            </a>
             <nav class="navbar-nav flex-row">
-                <a class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Hem
-                </a>
-                <a class="nav-link" href="contact">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kontakt
-                </a>
-                <a class="nav-link" href="about">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Om oss
-                </a>
+                <div class="d-flex bruh">
+                    <a class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Hem
+                    </a>
+                    <a class="nav-link" href="contact">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Kontakt
+                    </a>
+                    <a class="nav-link" href="about">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Om oss
+                    </a>
+                </div>
                 <div class="ml-auto">
                     <!-- Kundvagnsikon -->
-                    <a href="/cart" class="btn btn-outline-light position-relative">
+                    <a href="/checkout" class="btn btn-outline-light position-relative">
                         <i class="fas fa-shopping-cart"></i> Kundvagn
-                        <span class="badge badge-pill badge-danger position-absolute top-0 start-100 translate-middle bg-danger"
-                            id="cart-count">@cartCount</span>
+                        <span
+                            class="badge badge-pill badge-danger position-absolute top-0 start-100 translate-middle bg-danger"
+                            id="cart-count"> @CartService.GetCartCount()</span>
                     </a>
                 </div>
             </nav>
@@ -33,7 +39,7 @@
 <style>
     .header {
         background: linear-gradient(to right, #000850, purple);
-        height: 4rem;
+        height: 5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -42,6 +48,10 @@
         width: 100%;
         top: 0;
         z-index: 1000;
+    }
+    
+    .bruh {
+        margin-right: 40px;
     }
 
     .navbar-brand {
@@ -67,23 +77,13 @@
 </style>
 
 @code {
-
-    private int cartCount;
-    // updating cart with CartService
     protected override void OnInitialized()
     {
-        CartService.OnChange += UpdateCartCount;
-        cartCount = CartService.GetCartCount();
-    }
-
-    private void UpdateCartCount()
-    {
-        cartCount = CartService.GetCartCount();
-        StateHasChanged();
+        CartService.OnChange += StateHasChanged;
     }
 
     public void Dispose()
     {
-        CartService.OnChange -= UpdateCartCount;
+        CartService.OnChange -= StateHasChanged;
     }
 }

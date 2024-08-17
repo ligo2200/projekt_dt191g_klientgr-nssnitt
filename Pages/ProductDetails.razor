@@ -3,7 +3,6 @@
 @using Blazored.LocalStorage
 @inject ILocalStorageService localStorage
 @inject NavigationManager navManager
-@inject NavigationManager Navigation
 @using ClientApp.Services
 @inject CartService CartService
 
@@ -61,6 +60,12 @@
 
     private bool isAddedToCart = false;
 
+    // updating cart
+     protected override async Task OnInitializedAsync()
+    {
+        CartService.OnChange += StateHasChanged;
+    }
+
     private void NavigateBackToCategory()
     {
         navManager.NavigateTo($"/category/{product.CategoryId}");
@@ -72,9 +77,8 @@
         {
             product = await Http.GetFromJsonAsync<Product>($"http://localhost:5244/api/Api/products/{productId}");
 
-            // check if product have been added
-            var cart = await localStorage.GetItemAsync<List<int>>("cart") ?? new List<int>();
-            isAddedToCart = cart.Contains(productId);
+            // check if product already have been added
+             isAddedToCart = CartService.GetCartItems().Contains(productId);
         }
         catch (Exception ex)
         {
@@ -82,29 +86,19 @@
         }
     }
 
-    private async Task AddToCart()
+     private async Task AddToCart()
     {
-        var cart = await localStorage.GetItemAsync<List<int>>("cart") ?? new List<int>();
-        if (!cart.Contains(productId))
-        {
-            cart.Add(productId);
-            await localStorage.SetItemAsync("cart", cart);
+        await CartService.AddToCart(productId);
+        isAddedToCart = true;
 
-            isAddedToCart = true; // deactivating button
+        // delay navigation to insure cart has updated.
+        await Task.Delay(200);
+        navManager.NavigateTo($"/category/{product?.CategoryId}");
+    }
 
-            // Update cart with cartService
-            CartService.AddToCart();
-        }
-
-        // Go back to category
-        if (product != null && product.CategoryId != 0)
-        {
-            navManager.NavigateTo($"/category/{product.CategoryId}");
-        }
-        else
-        {
-            Console.WriteLine("Produkt eller CategoryId saknas!");
-        }
+    public void Dispose()
+    {
+        CartService.OnChange -= StateHasChanged;
     }
 
     public class Product
