@@ -19,9 +19,9 @@
                             <h5 class="card-title">@product.TypeOfProduct</h5>
                             <p class="card-text">Pris: @product.Price kr</p>
                             <p class="card-text">Storlek: @product.Size</p>
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-center">
                                 <a href="@($"/product-details/{product.ProductId}")" class="btn btn-primary">Se detaljer</a>
-                                <a href="#" class="btn btn-secondary">Köp nu</a>
+                        
                             </div>
                         </div>
                     </div>
@@ -50,10 +50,10 @@
     {
         try
         {
-            // Hämta produkterna för vald kategori
+            // get products by category
             products = await Http.GetFromJsonAsync<List<Product>>($"http://localhost:5244/api/Api/products/category/{categoryId}");
 
-            // Hämta kategorinamnet
+            // get category by name
             var category = await Http.GetFromJsonAsync<Category>($"http://localhost:5244/api/Api/categories/{categoryId}");
             categoryName = category?.Name;
         }
