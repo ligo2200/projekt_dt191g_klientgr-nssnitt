@@ -1,0 +1,27 @@
+@page "/cart"
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+
+<h3>Kundvagn</h3>
+
+@code {
+    private List<Product> cart = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cart = await localStorage.GetItemAsync<List<Product>>("cart") ?? new List<Product>();
+    }
+
+    private async Task AddToCart(Product product)
+    {
+        cart.Add(product);
+        await localStorage.SetItemAsync("cart", cart);
+    }
+
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+    }
+}

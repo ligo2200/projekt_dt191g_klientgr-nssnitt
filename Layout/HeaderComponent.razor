@@ -1,3 +1,8 @@
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+@using ClientApp.Services
+@inject CartService CartService
+
 <header class="header">
     <div class="container-fluid">
         <div class="navbar navbar-dark">
@@ -16,8 +21,8 @@
                     <!-- Kundvagnsikon -->
                     <a href="/cart" class="btn btn-outline-light position-relative">
                         <i class="fas fa-shopping-cart"></i> Kundvagn
-                        <span class="badge badge-pill badge-danger position-absolute top-0 start-100 translate-middle"
-                            id="cart-count">0</span>
+                        <span class="badge badge-pill badge-danger position-absolute top-0 start-100 translate-middle bg-danger"
+                            id="cart-count">@cartCount</span>
                     </a>
                 </div>
             </nav>
@@ -60,3 +65,25 @@
         align-items: center;
     }
 </style>
+
+@code {
+
+    private int cartCount;
+    // updating cart with CartService
+    protected override void OnInitialized()
+    {
+        CartService.OnChange += UpdateCartCount;
+        cartCount = CartService.GetCartCount();
+    }
+
+    private void UpdateCartCount()
+    {
+        cartCount = CartService.GetCartCount();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        CartService.OnChange -= UpdateCartCount;
+    }
+}

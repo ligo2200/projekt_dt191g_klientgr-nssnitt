@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "Blazored.LocalStorage/4.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.Web": "8.0.0"
+        },
+        "compile": {
+          "lib/net8.0/Blazored.LocalStorage.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/Blazored.LocalStorage.dll": {}
+        }
+      },
       "Microsoft.AspNetCore.Authorization/8.0.2": {
         "type": "package",
         "dependencies": {
@@ -494,6 +506,18 @@
       }
     },
     "net8.0/browser-wasm": {
+      "Blazored.LocalStorage/4.5.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.Web": "8.0.0"
+        },
+        "compile": {
+          "lib/net8.0/Blazored.LocalStorage.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/Blazored.LocalStorage.dll": {}
+        }
+      },
       "Microsoft.AspNetCore.Authorization/8.0.2": {
         "type": "package",
         "dependencies": {
@@ -981,6 +1005,22 @@
     }
   },
   "libraries": {
+    "Blazored.LocalStorage/4.5.0": {
+      "sha512": "6nZuJwA7zNIKx83IsObiHXZb09ponJOpCClU3en+hI8ZFvrOKXeOw+H7TegQZQrvdR1n9fkrVkEBQZg8vx6ZTw==",
+      "type": "package",
+      "path": "blazored.localstorage/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "blazored.localstorage.4.5.0.nupkg.sha512",
+        "blazored.localstorage.nuspec",
+        "icon.png",
+        "lib/net6.0/Blazored.LocalStorage.dll",
+        "lib/net7.0/Blazored.LocalStorage.dll",
+        "lib/net8.0/Blazored.LocalStorage.dll"
+      ]
+    },
     "Microsoft.AspNetCore.Authorization/8.0.2": {
       "sha512": "Z4fjwzXxsdk3GpNBd1SjltifmxWD0jpS3iWCxCjeXQecoQ1+1Nbgbv1ZTbQw2uDVbuEwpfz5cTmRgocG3HBNAA==",
       "type": "package",
@@ -2052,6 +2092,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Blazored.LocalStorage >= 4.5.0",
       "Microsoft.AspNetCore.Components.WebAssembly >= 8.0.2",
       "Microsoft.AspNetCore.Components.WebAssembly.DevServer >= 8.0.2",
       "Microsoft.NET.ILLink.Tasks >= 8.0.8",
@@ -2065,11 +2106,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj",
+      "projectUniqueName": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj",
       "projectName": "ClientApp",
-      "projectPath": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj",
+      "projectPath": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj",
       "packagesPath": "C:\\Users\\Götenmark\\.nuget\\packages\\",
-      "outputPath": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\obj\\",
+      "outputPath": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -2108,6 +2149,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Blazored.LocalStorage": {
+            "target": "Package",
+            "version": "[4.5.0, )"
+          },
           "Microsoft.AspNetCore.Components.WebAssembly": {
             "target": "Package",
             "version": "[8.0.2, )"

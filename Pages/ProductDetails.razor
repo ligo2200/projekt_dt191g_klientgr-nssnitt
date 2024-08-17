@@ -1,5 +1,11 @@
 @page "/product-details/{productId:int}"
 @inject HttpClient Http
+@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+@inject NavigationManager navManager
+@inject NavigationManager Navigation
+@using ClientApp.Services
+@inject CartService CartService
 
 
 <div class="container mt-5 d-flex flex-column align-items-center">
@@ -17,7 +23,14 @@
                 <p class="card-text">Färg: @product.Color</p>
                 <p class="card-text">Beskrivning: @product.Description</p>
                 <div class="d-flex justify-content-center">
-                    <a href="javascript:void(0);" class="btn btn-secondary" @onclick="() => AddToCart(product)">Köp nu</a>
+                    <button class="btn btn-secondary" @onclick="AddToCart" disabled="@isAddedToCart">@if (isAddedToCart)
+                        {
+                            <span class="blockdisplay">Tillagd i kundvagn</span>
+                        }
+                        else
+                        {
+                            <span class="blockdisplay">Köp nu</span>
+                        }</button>
                 </div>
 
             </div>
@@ -29,25 +42,68 @@
     }
 
     <div class="text-center mt-4">
-        <a href="http://localhost:5192/category/14" class="btn btn-link" style="font-size: 1.2rem;">Tillbaka till
-            Överdelar</a>
+        <button @onclick="NavigateBackToCategory" class="btn btn-link" style="font-size: 1.2rem;">Tillbaka till
+            Kategori</button>
     </div>
 
 </div>
+
+<style>
+    .blockdisplay {
+        display: block;
+    }
+</style>
+
 @code {
     [Parameter] public int productId { get; set; }
 
     private Product? product;
+
+    private bool isAddedToCart = false;
+
+    private void NavigateBackToCategory()
+    {
+        navManager.NavigateTo($"/category/{product.CategoryId}");
+    }
 
     protected override async Task OnParametersSetAsync()
     {
         try
         {
             product = await Http.GetFromJsonAsync<Product>($"http://localhost:5244/api/Api/products/{productId}");
+
+            // check if product have been added
+            var cart = await localStorage.GetItemAsync<List<int>>("cart") ?? new List<int>();
+            isAddedToCart = cart.Contains(productId);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Ett fel inträffade vid hämtning av produkten: {ex.Message}");
+        }
+    }
+
+    private async Task AddToCart()
+    {
+        var cart = await localStorage.GetItemAsync<List<int>>("cart") ?? new List<int>();
+        if (!cart.Contains(productId))
+        {
+            cart.Add(productId);
+            await localStorage.SetItemAsync("cart", cart);
+
+            isAddedToCart = true; // deactivating button
+
+            // Update cart with cartService
+            CartService.AddToCart();
+        }
+
+        // Go back to category
+        if (product != null && product.CategoryId != 0)
+        {
+            navManager.NavigateTo($"/category/{product.CategoryId}");
+        }
+        else
+        {
+            Console.WriteLine("Produkt eller CategoryId saknas!");
         }
     }
 
@@ -60,59 +116,6 @@
         public string Color { get; set; }
         public string Description { get; set; }
         public string ImageName { get; set; }
-    }
-
-    // Funktion för att lägga till en produkt i kundvagnen
-    public void AddToCart(Product product)
-    {
-        // Hämta befintlig kundvagn från localStorage
-        var cart = GetCart();
-
-        // Lägg till produkten till kundvagnen
-        cart.Add(product);
-
-        // Spara tillbaka kundvagnen till localStorage
-        SaveCart(cart);
-
-        // Uppdatera kundvagnsantalet
-        UpdateCartCount();
-    }
-
-    // Hämta kundvagnen från localStorage
-    private List<Product> GetCart()
-    {
-        var cartJson = localStorage.GetItem("cart");
-        if (cartJson != null)
-        {
-            return JsonSerializer.Deserialize<List<Product>>(cartJson);
-        }
-        return new List<Product>();
-    }
-
-    // Spara kundvagnen till localStorage
-    private void SaveCart(List<Product> cart)
-    {
-        var cartJson = JsonSerializer.Serialize(cart);
-        localStorage.SetItem("cart", cartJson);
-    }
-
-    // Uppdatera antalet produkter i kundvagnen
-    private void UpdateCartCount()
-    {
-        var cart = GetCart();
-        var cartCountElement = document.getElementById("cart-count");
-        if (cartCountElement != null)
-        {
-            cartCountElement.innerText = cart.Count.ToString();
-        }
-    }
-
-    // När komponenten laddas, uppdatera kundvagnsantalet
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            UpdateCartCount();
-        }
+        public int CategoryId { get; set; }
     }
 }
