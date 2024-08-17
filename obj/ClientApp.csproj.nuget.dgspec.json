@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj": {}
+    "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj": {}
   },
   "projects": {
-    "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj": {
+    "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj",
+        "projectUniqueName": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj",
         "projectName": "ClientApp",
-        "projectPath": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj",
+        "projectPath": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj",
         "packagesPath": "C:\\Users\\Götenmark\\.nuget\\packages\\",
-        "outputPath": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\obj\\",
+        "outputPath": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

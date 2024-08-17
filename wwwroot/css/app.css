@@ -117,3 +117,10 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+.container {
+    border: 2px solid red;
+    max-width: 1140px; 
+    margin: 0 auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}

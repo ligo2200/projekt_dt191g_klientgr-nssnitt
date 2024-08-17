@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wdT3g0tdn4c=",
+  "dgSpecHash": "IZMSfB/R/MM=",
   "success": true,
-  "projectFilePath": "C:\\Linda\\webbutveckling\\år2\\dt191g_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\clientapp\\ClientApp.csproj",
+  "projectFilePath": "C:\\Linda\\webbutveckling\\år2\\DT191G_webbutveckling_med_dotnet\\projekt\\projekt_bytesmarknad\\ClientApp\\ClientApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Götenmark\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.2\\microsoft.aspnetcore.authorization.8.0.2.nupkg.sha512",
     "C:\\Users\\Götenmark\\.nuget\\packages\\microsoft.aspnetcore.components\\8.0.2\\microsoft.aspnetcore.components.8.0.2.nupkg.sha512",

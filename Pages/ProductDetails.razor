@@ -1,6 +1,6 @@
 @page "/product-details/{productId:int}"
 @inject HttpClient Http
-@inject NavigationManager Navigation
+
 
 <div class="container mt-5 d-flex flex-column align-items-center">
     <h3 class="mt-5 text-center">@product?.TypeOfProduct</h3>
@@ -17,7 +17,7 @@
                 <p class="card-text">Färg: @product.Color</p>
                 <p class="card-text">Beskrivning: @product.Description</p>
                 <div class="d-flex justify-content-center">
-                    <a href="#" class="btn btn-secondary">Köp nu</a>
+                    <a href="javascript:void(0);" class="btn btn-secondary" @onclick="() => AddToCart(product)">Köp nu</a>
                 </div>
 
             </div>
@@ -29,7 +29,8 @@
     }
 
     <div class="text-center mt-4">
-        <a href="http://localhost:5192/category/14" class="btn btn-link" style="font-size: 1.2rem;">Tillbaka till Överdelar</a>
+        <a href="http://localhost:5192/category/14" class="btn btn-link" style="font-size: 1.2rem;">Tillbaka till
+            Överdelar</a>
     </div>
 
 </div>
@@ -59,5 +60,59 @@
         public string Color { get; set; }
         public string Description { get; set; }
         public string ImageName { get; set; }
+    }
+
+    // Funktion för att lägga till en produkt i kundvagnen
+    public void AddToCart(Product product)
+    {
+        // Hämta befintlig kundvagn från localStorage
+        var cart = GetCart();
+
+        // Lägg till produkten till kundvagnen
+        cart.Add(product);
+
+        // Spara tillbaka kundvagnen till localStorage
+        SaveCart(cart);
+
+        // Uppdatera kundvagnsantalet
+        UpdateCartCount();
+    }
+
+    // Hämta kundvagnen från localStorage
+    private List<Product> GetCart()
+    {
+        var cartJson = localStorage.GetItem("cart");
+        if (cartJson != null)
+        {
+            return JsonSerializer.Deserialize<List<Product>>(cartJson);
+        }
+        return new List<Product>();
+    }
+
+    // Spara kundvagnen till localStorage
+    private void SaveCart(List<Product> cart)
+    {
+        var cartJson = JsonSerializer.Serialize(cart);
+        localStorage.SetItem("cart", cartJson);
+    }
+
+    // Uppdatera antalet produkter i kundvagnen
+    private void UpdateCartCount()
+    {
+        var cart = GetCart();
+        var cartCountElement = document.getElementById("cart-count");
+        if (cartCountElement != null)
+        {
+            cartCountElement.innerText = cart.Count.ToString();
+        }
+    }
+
+    // När komponenten laddas, uppdatera kundvagnsantalet
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            UpdateCartCount();
+        }
     }
 }
