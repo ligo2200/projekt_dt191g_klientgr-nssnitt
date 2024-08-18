@@ -6,11 +6,66 @@
 <div class="container mt-5">
     <h3 class="mt-5 pt-4 mb-4 pb-2 text-center" style="font-size: 1.5rem;">Produkter för kategori @categoryName</h3>
 
+    <!-- Filter Sektion -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <label for="colorFilter">Färg</label>
+            <select id="colorFilter" class="form-control" @onchange="FilterProducts">
+                <option value="">Alla färger</option>
+                @foreach (var color in uniqueColors)
+                {
+                    <option value="@color">@color</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="sizeFilter">Storlek</label>
+            <select id="sizeFilter" class="form-control" @onchange="FilterProducts">
+                <option value="">Alla storlekar</option>
+                @foreach (var size in uniqueSizes)
+                {
+                    <option value="@size">@size</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- Produktlistan -->
+    <div class="row">
+        @if (filteredProducts != null && filteredProducts.Any())
+        {
+            @foreach (var product in filteredProducts)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="@($"http://localhost:5244/images/{product.ImageName}")" class="card-img-top"
+                            style="height: 200px; object-fit: cover;" alt="Produktbild">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.TypeOfProduct</h5>
+                            <p class="card-text">Storlek: @product.Size</p>
+                            <p class="card-text">Färg: @product.Color</p>
+                            <p class="card-text">Pris: @product.Price kr</p>
+                            <div class="d-flex justify-content-center">
+                                <a href="@($"/product-details/{product.ProductId}")" class="btn btn-primary">Se detaljer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Inga produkter tillgängliga.</p>
+        }
+    </div>
+
+    <!--
     @if (products != null)
     {
         <div class="row">
-            @foreach (var product in products)
-            {
+        @foreach (var product in products)
+        {
                 <div class="col-md-4 mb-4">
                     <div class="card" style="width: 18rem;">
                         <img src="@($"http://localhost:5244/images/{product.ImageName}")" class="card-img-top"
@@ -21,18 +76,18 @@
                             <p class="card-text">Storlek: @product.Size</p>
                             <div class="d-flex justify-content-center">
                                 <a href="@($"/product-details/{product.ProductId}")" class="btn btn-primary">Se detaljer</a>
-                        
+
                             </div>
                         </div>
                     </div>
                 </div>
-            }
+        }
         </div>
     }
     else
     {
         <p>Laddar produkter...</p>
-    }
+    }-->
 
     <div class="text-center mt-4">
         <a href="/" class="btn btn-link" style="font-size: 1.2rem;">Tillbaka till startsidan</a>
@@ -44,7 +99,15 @@
     [Parameter] public int categoryId { get; set; }
 
     private List<Product>? products;
+    private List<Product>? filteredProducts;
     private string? categoryName;
+
+    // Filter by colors and sizes
+    private List<string> uniqueColors = new List<string>();
+    private List<string> uniqueSizes = new List<string>();
+
+    private string selectedColor = "";
+    private string selectedSize = "";
 
     protected override async Task OnParametersSetAsync()
     {
@@ -56,11 +119,30 @@
             // get category by name
             var category = await Http.GetFromJsonAsync<Category>($"http://localhost:5244/api/Api/categories/{categoryId}");
             categoryName = category?.Name;
+
+            // Selecting colors and sizes
+            uniqueColors = products.Select(p => p.Color).Distinct().ToList();
+            uniqueSizes = products.Select(p => p.Size).Distinct().ToList();
+
+            // show all products
+            filteredProducts = products;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Ett fel inträffade vid hämtning av kategorier: {ex.Message}");
         }
+    }
+
+    private void FilterProducts(ChangeEventArgs e)
+    {
+        // get choice
+        selectedColor = (string)e.Value;
+
+        // filtrate on customers choice
+        filteredProducts = products.Where(p =>
+        (string.IsNullOrEmpty(selectedColor) || p.Color == selectedColor) &&
+        (string.IsNullOrEmpty(selectedSize) || p.Size == selectedSize)
+        ).ToList();
     }
 
     public class Product

@@ -6,7 +6,7 @@
 @using ClientApp.Services
 @inject CartService CartService
 
-<div class="container mt-3 mb-5 d-flex flex-column align-items-center">
+<div class="container mt-3 d-flex flex-column align-items-center">
     <h3 class="mt-5 text-center pt-3 mb-5">Kassa</h3>
 
     @if (cartProducts != null && cartProducts.Any())
@@ -14,15 +14,15 @@
         <div class="row w-100 d-flex justify-content-center">
             @foreach (var product in cartProducts)
             {
-                <div class="col-md-4 mb-4">
-                    <div class="card">
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
                         <img src="@($"http://localhost:5244/images/{product.ImageName}")" class="card-img-top"
                             style="height: 150px; object-fit: cover;" alt="Produktbild">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title">@product.TypeOfProduct</h5>
                             <p class="card-text">Storlek: @product.Size</p>
                             <p class="card-text">Pris: @product.Price kr</p>
-                            <div class="d-flex justify-content-center">
+                            <div class="mt-auto d-flex justify-content-center">
                                 <button class="btn btn-danger" @onclick="() => RemoveFromCart(product.ProductId)">
                                     <i class="fas fa-trash"></i> Ta bort
                                 </button>
@@ -33,9 +33,9 @@
             }
         </div>
 
-        <div class="form-container d-flex flex-column align-items-center mt-5 mb-5 w-75">
-            <h3>Din information</h3>
-            <EditForm Model="orderDetails" OnValidSubmit="SubmitOrder" class="w-50">
+        <div class="form-container mt-5 mb-5 w-100 w-md-75">
+            <h3 class="text-center">Din information</h3>
+            <EditForm Model="orderDetails" OnValidSubmit="SubmitOrder" class="w-100 w-md-50 mx-auto">
                 <div class="form-group">
                     <label for="name">Namn (För- och efternamn)</label>
                     <InputText id="name" class="form-control" @bind-Value="orderDetails.BuyerName" />

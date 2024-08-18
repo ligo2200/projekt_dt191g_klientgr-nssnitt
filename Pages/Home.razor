@@ -6,17 +6,41 @@
 
 <div class="container mt-5 mb-5">
     <h1 class="text-center mt-5" style="font-size: 2rem;">Välkommen till Webshopen för Barnens hörnas bytesmarknad!</h1>
-
-    <!-- Sektion för nyaste produkterna -->
     <section class="mt-5">
         <h2>Senast inkomna Produkter</h2>
-        <div class="row" id="latest-products" hx-get="http://localhost:5244/api/Api/products/latest" hx-trigger="load"
-            hx-target="#latest-products">
-            <!-- Nyaste produkterna hämtas här -->
+        <div class="row">
+            @if (latestProducts == null)
+            {
+                <p>Laddar produkter...</p>
+            }
+            else if (!latestProducts.Any())
+            {
+                <p>Inga produkter tillgängliga.</p>
+            }
+            else
+            {
+                @foreach (var product in latestProducts)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="@($"http://localhost:5244/images/{product.ImageName}")" class="card-img-top"
+                                style="height: 200px; object-fit: cover;" alt="Produktbild">
+                            <div class="card-body">
+                                <h5 class="card-title">@product.TypeOfProduct</h5>
+                                <p class="card-text">Storlek: @product.Size</p>
+                                <p class="card-text">Pris: @product.Price kr</p>
+                                <div class="d-flex justify-content-center">
+                                    <a href="@($"/product-details/{product.ProductId}")" class="btn btn-primary">Se detaljer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
     </section>
 
-    <!-- Sektion för kategorier -->
+    <!-- categories-buttons -->
     <section class="categories mt-5">
         <h3>Kategorier</h3>
         @if (categories != null)
@@ -38,33 +62,21 @@
         }
     </section>
 
-    <!-- Sektion för att visa produkter från vald kategori -->
-    <section id="products-section" class="mt-5">
-
-        <!--<div class="col-md-4 mb-4" hx-get="/api/products/{{category}}" hx-trigger="load">
-            <div class="card">
-                <img src="{{productImageUrl}}" class="card-img-top" alt="Product Image">
-                <div class="card-body">
-                    <h5 class="card-title">{{productName}}</h5>
-                    <p class="card-text">Storlek: {{productSize}}</p>
-                    <p class="card-text">Pris: {{productPrice}} kr</p>
-                    <a href="#" class="btn btn-primary" hx-post="/cart/add/{{productId}}">Köp nu</a>
-                    <a href="#" class="btn btn-secondary" hx-get="/api/products/{{productId}}"
-                        hx-target="#product-details">Se produkt</a>
-                </div>
-            </div>
-        </div>-->
-
-    </section>
 </div>
 
 @code {
+
+    private List<Product>? latestProducts;
     private List<Category>? categories;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            // get latest products
+            latestProducts = await Http.GetFromJsonAsync<List<Product>>("http://localhost:5244/api/Api/products/latest");
+
+            // get categories
             categories = await Http.GetFromJsonAsync<List<Category>>("http://localhost:5244/api/Api/categories");
 
             if (categories == null || categories.Count == 0)
@@ -76,6 +88,17 @@
         {
             Console.WriteLine($"Ett fel inträffade vid hämtning av kategorier: {ex.Message}");
         }
+    }
+
+    public class Product
+    {
+        public int ProductId { get; set; }
+        public string TypeOfProduct { get; set; }
+        public int Price { get; set; }
+        public string Size { get; set; }
+        public string Color { get; set; }
+        public string Description { get; set; }
+        public string ImageName { get; set; }
     }
 
     public class Category
